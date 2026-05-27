@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "xu_component_lib"
+version = "${version}"
+displayName = "Xu Component Lib"
+authors = "XuHaoNan"
+description = '''
+No Description For Now, This Project Now Is Under Development.
+'''
+#logoFile = ""
+
+[[dependencies.xu_component_lib]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.xu_component_lib]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.xu_component_lib]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.1.12,)"
+ordering = "AFTER"
+side = "BOTH"
