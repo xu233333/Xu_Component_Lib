@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "xu_mod.xu_component_lib.mixin.forge",
+  "package": "xu_mod.xu_component_lib.forge.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
