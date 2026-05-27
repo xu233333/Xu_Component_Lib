@@ -5,10 +5,12 @@ import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import xu_mod.xu_component_lib.api.ComponentAPI;
+import xu_mod.xu_component_lib.api.ComponentInitializer;
 import xu_mod.xu_component_lib.api.SerializableComponent;
 import xu_mod.xu_component_lib.fabric.component.EntityComponentBase;
 import xu_mod.xu_component_lib.fabric.component.PlayerComponentBase;
@@ -18,8 +20,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ComponentSystemImpl_CCA implements EntityComponentInitializer {
+    public static boolean IsInitialized = false;
+
     public static final HashMap<ResourceLocation, ComponentKey<PlayerComponentBase>> playerComponentRegistry = new HashMap<>();
     public static final HashMap<ResourceLocation, ComponentKey<EntityComponentBase>> entityComponentRegistry = new HashMap<>();
+
+    public static final String KEY = "xu_component_lib";
 
     public static ComponentKey<PlayerComponentBase> getComponentKey_Player(ResourceLocation id, Player player) {
         return playerComponentRegistry.get(id);
@@ -31,6 +37,10 @@ public class ComponentSystemImpl_CCA implements EntityComponentInitializer {
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
+        // 保证所有的类都注册了
+        FabricLoader.getInstance().getEntrypointContainers(KEY, ComponentInitializer.class).forEach(
+                container -> container.getEntrypoint().registerComponent()
+        );
         for (Map.Entry<ResourceLocation, Function<Player, SerializableComponent<Player>>> entry : ComponentAPI.playerComponents.entrySet()) {
             ResourceLocation id = entry.getKey();
             Function<Player, SerializableComponent<Player>> component = entry.getValue();
@@ -61,5 +71,6 @@ public class ComponentSystemImpl_CCA implements EntityComponentInitializer {
             );
             entityComponentRegistry.put(id, componentKey);
         }
+        IsInitialized = true;
     }
 }

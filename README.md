@@ -3,5 +3,10 @@
 
 目前仅准备实现挂载到LivingEntity Player两个类 一个给能力引擎 另一个给SSC
 
-CCA 需要挂Custom 我之后试试能不能用Mixin在它读取前注入对应的Custom
+~~CCA 需要挂Custom 我之后试试能不能用Mixin在它读取前注入对应的Custom~~ 没法整 还是挂Custom吧
 Forge端没写过Component 之后研究一下(之前都是Mixin进对应函数附加NBT 没用过Forge的API)
+
+注册方法: 目前仅支持LivingEntity Player两个类
+双端 写一个ComponentInitializer 在registerComponent函数里注册SerializableComponent
+Fabric 使用EntryPoint挂载ComponentInitializer 然后给CCA的Custom里添加对应的ID
+Forge 在FMLCommonSetupEvent之前调用ComponentInitializer里的registerComponent函数 或者直接注册 不写ComponentInitializer

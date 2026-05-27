@@ -21,6 +21,9 @@
   "entrypoints": {
     "main": [
       "xu_mod.xu_component_lib.fabric.XuComponentLibFabric"
+    ],
+    "cardinal-components-entity": [
+      "xu_mod.xu_component_lib.fabric.ComponentSystemImpl_CCA"
     ]
   },
   "mixins": [
