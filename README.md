@@ -1,2 +1,7 @@
 算是SSC双端版本开发的第1步 如果失败了SSC双端版本的开发就基本宣布失败了
 我之前只写过单端Mod(Port加载器只手动Port) 所以需要测试一下技术可行性 最坏的可能性就是没法做双端 那么只能Fabric和Forge二选一了(我个人倾向使用Forge 只需手搓一个类Apoli 就能享受到Forge的高级API 后续开发会十分舒服)
+
+目前仅准备实现挂载到LivingEntity Player两个类 一个给能力引擎 另一个给SSC
+
+CCA 需要挂Custom 我之后试试能不能用Mixin在它读取前注入对应的Custom
+Forge端没写过Component 之后研究一下(之前都是Mixin进对应函数附加NBT 没用过Forge的API)
