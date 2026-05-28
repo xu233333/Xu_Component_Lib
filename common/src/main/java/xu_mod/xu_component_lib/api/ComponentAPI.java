@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 import xu_mod.xu_component_lib.Platform;
 
 import java.util.HashMap;
@@ -11,41 +12,35 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ComponentAPI {
+    // 不推荐用
     public static HashMap<ResourceLocation, Function<Player, SerializableComponent<Player>>> playerComponents = new HashMap<>();
     public static HashMap<ResourceLocation, Function<LivingEntity, SerializableComponent<LivingEntity>>> entityComponents = new HashMap<>();
 
-    public static ResourceLocation registerPlayerComponent(ResourceLocation id, Function<Player, SerializableComponent<Player>> component) {
-        playerComponents.put(id, component);
-        Platform.registerPlayerComponent(id, component);
-        return id;
+    // 这不是注册表 需要在Impl里实现对应的逻辑 类似Enum
+    public static ComponentType<Player> PLAYER = new ComponentType<>(Player.class, playerComponents);
+    public static ComponentType<LivingEntity> ENTITY = new ComponentType<>(LivingEntity.class, entityComponents);
+
+    public static <T> ResourceLocation registerComponent(ComponentType<T> type, ResourceLocation id, Function<T, SerializableComponent<T>> component) {
+        return type.registerComponent(id, component);
     }
 
-    public static ResourceLocation registerEntityComponent(ResourceLocation id, Function<LivingEntity, SerializableComponent<LivingEntity>> component) {
-        entityComponents.put(id, component);
-        Platform.registerEntityComponent(id, component);
-        return id;
+    public static <CLASS, DATA extends SerializableComponent<CLASS>> ComponentProvider<CLASS, DATA> registerComponent_Provider(ComponentType<CLASS> type, ResourceLocation id, Function<CLASS, SerializableComponent<CLASS>> component) {
+        type.registerComponent(id, component);
+        return (ComponentProvider<CLASS, DATA>) type.createProvider(id);
     }
 
-    public static SerializableComponent<Player> getPlayerComponent(Player player, ResourceLocation id) {
-        return Platform.getPlayerComponent(player, id);
+    public static <T> SerializableComponent<T> getComponent(ComponentType<T> type, T owner, ResourceLocation id) {
+        return type.getComponent(owner, id);
     }
 
-    public static void syncPlayerComponent(Player player, ResourceLocation id) {
-        Platform.syncPlayerComponent(player, id);
-    }
-
-    public static SerializableComponent<LivingEntity> getEntityComponent(LivingEntity entity, ResourceLocation id) {
-        return Platform.getEntityComponent(entity, id);
-    }
-
-    public static void syncEntityComponent(LivingEntity entity, ResourceLocation id) {
-        Platform.syncEntityComponent(entity, id);
+    public static <T> void syncComponent(ComponentType<T> type, T owner, ResourceLocation id) {
+        type.syncComponent(owner, id);
     }
 
     public static void onPlayerRespawn(Player oldPlayer, Player newPlayer, boolean wasRespawn) {
-        for (ResourceLocation id : ComponentAPI.playerComponents.keySet()) {
-            SerializableComponent<Player> oldComp = Platform.getPlayerComponent(oldPlayer, id);
-            SerializableComponent<Player> newComp = Platform.getPlayerComponent(newPlayer, id);
+        for (ResourceLocation id : PLAYER.getRegisterMap().keySet()) {
+            SerializableComponent<Player> oldComp = Platform.getComponent(PLAYER, oldPlayer, id);
+            SerializableComponent<Player> newComp = Platform.getComponent(PLAYER, newPlayer, id);
             if (oldComp != null && newComp != null) {
                 CompoundTag temp = new CompoundTag();
                 oldComp.save(temp, false);
@@ -53,11 +48,12 @@ public class ComponentAPI {
                 if (wasRespawn) {
                     newComp.onRespawn(oldPlayer, newPlayer);
                 }
+                Platform.syncComponent(PLAYER, newPlayer, id);
             }
         }
-        for (ResourceLocation id : ComponentAPI.entityComponents.keySet()) {
-            SerializableComponent<LivingEntity> oldComp = Platform.getEntityComponent(oldPlayer, id);
-            SerializableComponent<LivingEntity> newComp = Platform.getEntityComponent(newPlayer, id);
+        for (ResourceLocation id : ENTITY.getRegisterMap().keySet()) {
+            SerializableComponent<LivingEntity> oldComp = Platform.getComponent(ENTITY, oldPlayer, id);
+            SerializableComponent<LivingEntity> newComp = Platform.getComponent(ENTITY, newPlayer, id);
             if (oldComp != null && newComp != null) {
                 CompoundTag temp = new CompoundTag();
                 oldComp.save(temp, false);
@@ -65,6 +61,7 @@ public class ComponentAPI {
                 if (wasRespawn) {
                     newComp.onRespawn(oldPlayer, newPlayer);
                 }
+                Platform.syncComponent(ENTITY, newPlayer, id);
             }
         }
     }

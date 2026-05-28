@@ -18,7 +18,7 @@ public class ForgeEventHandler {
     public void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
         if (entity instanceof Player player) {
-            for (var entry : ComponentAPI.playerComponents.entrySet()) {
+            for (var entry : ComponentAPI.PLAYER.getRegisterMap().entrySet()) {
                 ResourceLocation id = entry.getKey();
                 var componentFactory = entry.getValue();
                 SerializableComponent<Player> comp = componentFactory.apply(player);
@@ -28,7 +28,7 @@ public class ForgeEventHandler {
             }
         }
         if (entity instanceof LivingEntity livingEntity) {
-            for (var entry : ComponentAPI.entityComponents.entrySet()) {
+            for (var entry : ComponentAPI.ENTITY.getRegisterMap().entrySet()) {
                 ResourceLocation id = entry.getKey();
                 var componentFactory = entry.getValue();
                 SerializableComponent<LivingEntity> comp = componentFactory.apply(livingEntity);

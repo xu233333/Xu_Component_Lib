@@ -41,7 +41,7 @@ public class ComponentSystemImpl_CCA implements EntityComponentInitializer {
         FabricLoader.getInstance().getEntrypointContainers(KEY, ComponentInitializer.class).forEach(
                 container -> container.getEntrypoint().registerComponent()
         );
-        for (Map.Entry<ResourceLocation, Function<Player, SerializableComponent<Player>>> entry : ComponentAPI.playerComponents.entrySet()) {
+        for (Map.Entry<ResourceLocation, Function<Player, SerializableComponent<Player>>> entry : ComponentAPI.PLAYER.getRegisterMap().entrySet()) {
             ResourceLocation id = entry.getKey();
             Function<Player, SerializableComponent<Player>> component = entry.getValue();
             ComponentKey<PlayerComponentBase> componentKey = ComponentRegistry.getOrCreate(id, PlayerComponentBase.class);
@@ -56,7 +56,7 @@ public class ComponentSystemImpl_CCA implements EntityComponentInitializer {
             );
             playerComponentRegistry.put(id, componentKey);
         }
-        for (Map.Entry<ResourceLocation, Function<LivingEntity, SerializableComponent<LivingEntity>>> entry : ComponentAPI.entityComponents.entrySet()) {
+        for (Map.Entry<ResourceLocation, Function<LivingEntity, SerializableComponent<LivingEntity>>> entry : ComponentAPI.ENTITY.getRegisterMap().entrySet()) {
             ResourceLocation id = entry.getKey();
             Function<LivingEntity, SerializableComponent<LivingEntity>> component = entry.getValue();
             ComponentKey<EntityComponentBase> componentKey = ComponentRegistry.getOrCreate(id, EntityComponentBase.class);

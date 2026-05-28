@@ -4,12 +4,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import xu_mod.xu_component_lib.XuComponentLib;
+import xu_mod.xu_component_lib.api.ComponentAPI;
+import xu_mod.xu_component_lib.api.ComponentType;
 import xu_mod.xu_component_lib.api.SerializableComponent;
 
 import java.util.function.Function;
 
 public class PlatformImpl {
-    public static void registerPlayerComponent(ResourceLocation id, Function<Player, SerializableComponent<Player>> component) {
+    public static <T> void registerComponent(ComponentType<T> type, ResourceLocation id, Function<T, SerializableComponent<T>> component) {
         // 提醒一下注册晚了
         if (ComponentSystemImpl_CCA.IsInitialized) {
             XuComponentLib.LOGGER.error("Cannot register player component after capability registry has been initialized");
@@ -17,27 +19,25 @@ public class PlatformImpl {
         }
     }
 
-    public static void registerEntityComponent(ResourceLocation id, Function<LivingEntity, SerializableComponent<LivingEntity>> component) {
-        // 提醒一下注册晚了
-        if (ComponentSystemImpl_CCA.IsInitialized) {
-            XuComponentLib.LOGGER.error("Cannot register entity component after capability registry has been initialized");
+    public static <T> SerializableComponent<T> getComponent(ComponentType<T> type, T owner, ResourceLocation id) {
+        if (type == ComponentAPI.PLAYER && owner instanceof Player player) {
+            return (SerializableComponent<T>) (Object) ComponentSystemImpl_CCA.getComponentKey_Player(id, player).get(player).component;
+        }
+        if (type == ComponentAPI.ENTITY && owner instanceof LivingEntity entity) {
+            return (SerializableComponent<T>) (Object) ComponentSystemImpl_CCA.getComponentKey_Entity(id, entity).get(entity).component;
+        }
+        throw new AssertionError();
+    }
+
+    public static <T> void syncComponent(ComponentType<T> type, T owner, ResourceLocation id) {
+        if (type == ComponentAPI.PLAYER && owner instanceof Player player) {
+            ComponentSystemImpl_CCA.getComponentKey_Player(id, player).sync(player);
             return;
         }
-    }
-
-    public static SerializableComponent<Player> getPlayerComponent(Player player, ResourceLocation id) {
-        return ComponentSystemImpl_CCA.getComponentKey_Player(id, player).get(player).component;
-    }
-
-    public static void syncPlayerComponent(Player player, ResourceLocation id) {
-        ComponentSystemImpl_CCA.getComponentKey_Player(id, player).sync(player);
-    }
-
-    public static SerializableComponent<LivingEntity> getEntityComponent(LivingEntity entity, ResourceLocation id) {
-        return ComponentSystemImpl_CCA.getComponentKey_Entity(id, entity).get(entity).component;
-    }
-
-    public static void syncEntityComponent(LivingEntity entity, ResourceLocation id) {
-        ComponentSystemImpl_CCA.getComponentKey_Entity(id, entity).sync(entity);
+        if (type == ComponentAPI.ENTITY && owner instanceof LivingEntity entity) {
+            ComponentSystemImpl_CCA.getComponentKey_Entity(id, entity).sync(entity);
+            return;
+        }
+        throw new AssertionError();
     }
 }

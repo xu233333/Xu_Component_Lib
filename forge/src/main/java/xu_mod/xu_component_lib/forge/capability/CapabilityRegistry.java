@@ -20,12 +20,12 @@ public class CapabilityRegistry {
     public static final Map<ResourceLocation, Capability<ComponentCapability<LivingEntity>>> ENTITY_CAPS = new HashMap<>();
 
     public static void registerAll() {
-        for (Map.Entry<ResourceLocation, Function<Player, SerializableComponent<Player>>> entry : ComponentAPI.playerComponents.entrySet()) {
+        for (Map.Entry<ResourceLocation, Function<Player, SerializableComponent<Player>>> entry : ComponentAPI.PLAYER.getRegisterMap().entrySet()) {
             ResourceLocation id = entry.getKey();
             Capability<ComponentCapability<Player>> cap = CapabilityManager.get(new CapabilityToken<>() {});
             PLAYER_CAPS.put(id, cap);
         }
-        for (Map.Entry<ResourceLocation, Function<LivingEntity, SerializableComponent<LivingEntity>>> entry : ComponentAPI.entityComponents.entrySet()) {
+        for (Map.Entry<ResourceLocation, Function<LivingEntity, SerializableComponent<LivingEntity>>> entry : ComponentAPI.ENTITY.getRegisterMap().entrySet()) {
             ResourceLocation id = entry.getKey();
             Capability<ComponentCapability<LivingEntity>> cap = CapabilityManager.get(new CapabilityToken<>() {});
             ENTITY_CAPS.put(id, cap);
