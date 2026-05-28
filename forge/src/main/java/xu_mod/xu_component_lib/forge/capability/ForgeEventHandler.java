@@ -41,17 +41,6 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        Player oldPlayer = event.getOriginal();
-        Player newPlayer = event.getEntity();
-
-        for (ResourceLocation id : ComponentAPI.playerComponents.keySet()) {
-            SerializableComponent<Player> oldComp = Platform.getPlayerComponent(oldPlayer, id);
-            SerializableComponent<Player> newComp = Platform.getPlayerComponent(newPlayer, id);
-            if (oldComp != null && newComp != null) {
-                CompoundTag temp = new CompoundTag();
-                oldComp.save(temp, false);
-                newComp.load(temp, false);
-            }
-        }
+        ComponentAPI.onPlayerRespawn(event.getOriginal(), event.getEntity(), event.isWasDeath());
     }
 }

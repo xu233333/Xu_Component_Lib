@@ -8,4 +8,7 @@ public interface SerializableComponent<T> {
     void load(CompoundTag nbt, boolean formSync);
 
     default void init(T componentOwner) {}
+
+    // 触发load(formSync = false) 后调用
+    default void onRespawn(T oldObject, T newObject) {};
 }
