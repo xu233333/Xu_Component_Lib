@@ -24,6 +24,8 @@ public class ComponentAPI {
         return type.registerComponent(id, component);
     }
 
+
+    @SuppressWarnings("unchecked")
     public static <CLASS, DATA extends SerializableComponent<CLASS>> ComponentProvider<CLASS, DATA> registerComponent_Provider(ComponentType<CLASS> type, ResourceLocation id, Function<CLASS, SerializableComponent<CLASS>> component) {
         type.registerComponent(id, component);
         return (ComponentProvider<CLASS, DATA>) type.createProvider(id);

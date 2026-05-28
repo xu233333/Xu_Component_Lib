@@ -12,6 +12,8 @@ public class ComponentProvider<CLASS, DATA extends SerializableComponent<CLASS>>
         this.id = id;
     }
 
+
+    @SuppressWarnings("unchecked")
     public DATA getComponent(CLASS owner) {
         return (DATA) type.getComponent(owner, id);
     }

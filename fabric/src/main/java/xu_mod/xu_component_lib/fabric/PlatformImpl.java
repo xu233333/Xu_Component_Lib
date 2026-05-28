@@ -19,6 +19,7 @@ public class PlatformImpl {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> SerializableComponent<T> getComponent(ComponentType<T> type, T owner, ResourceLocation id) {
         if (type == ComponentAPI.PLAYER && owner instanceof Player player) {
             return (SerializableComponent<T>) (Object) ComponentSystemImpl_CCA.getComponentKey_Player(id, player).get(player).component;
