@@ -12,6 +12,13 @@ public class ComponentProvider<CLASS, DATA extends SerializableComponent<CLASS>>
         this.id = id;
     }
 
+    public ComponentType<CLASS> getType() {
+        return type;
+    }
+
+    public ResourceLocation getId() {
+        return id;
+    }
 
     @SuppressWarnings("unchecked")
     public DATA getComponent(CLASS owner) {
